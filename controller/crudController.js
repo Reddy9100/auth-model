@@ -1,4 +1,4 @@
-const connection = require("../model/crudModel");
+const connection = require("../index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 

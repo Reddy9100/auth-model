@@ -1,39 +1,49 @@
+const express = require("express");
+const app = express();
+const cors = require("cors");
+app.use(express.json());
+app.use(cors());
 
-const express = require("express")
+const port = 3000;
 
-const app = express()
+const mysql = require("mysql2");
 
-const cors = require("cors")
+const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "root123",
+    database: "test_db2"
+});
 
-app.use(express.json())
+const routesOfUser = require("./routes/crudRoutes");
 
-app.use(cors())
+function startServer() {
+    connection.connect(function(err) {
+        if (err) {
+            console.error("ERR WHILE CONNECTING TO DB", err);
+            return;
+        }
+        console.log("DATABASE_CONNECTION_ESTABLISHED");
 
-const port = 3000
+        const query = "SELECT * FROM users";
+        connection.query(query, function(err, result) {
+            if (err) {
+                console.error("ERROR EXECUTING QUERY", err);
+                return;
+            }
+            console.log(result);
 
-const connection = require("./model/crudModel")
-
-const routesOfUSer = require("./routes/crudRotes")
-
-async function startSever(){
-   
-    try{
-    await connection;
-    const query = "select * from users";
-    let result = await connection.query(query)
-    console.log(result)
-    console.log("DATABASE_CONNECTION_ESTABLISHED");
-   
-    app.listen(port,()=>console.log(`SERVER CONNECTION IS ESTABLISHED WITH PORT ${port}`))
-    }
-    catch(err){
-        console.log("ERR WHILE CONNECTING TO DB",err)
-    }
+            app.listen(port, function() {
+                console.log(`SERVER CONNECTION IS ESTABLISHED WITH PORT ${port}`);
+            });
+        });
+    });
 }
-startSever()
 
-app.get("/",(req,res)=>{
-   res.send("Hello world")
-})
+startServer();
 
-app.use("/api", routesOfUSer)
+app.get("/", (req, res) => {
+    res.send("Hello world");
+});
+
+app.use("/api", routesOfUser);

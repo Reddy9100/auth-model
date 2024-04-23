@@ -1,39 +1,53 @@
+require("dotenv").config()
+const express = require("express");
+const app = express();
+const cors = require("cors");
+app.use(express.json());
+app.use(cors());
 
-const express = require("express")
+const port = 3000;
 
-const app = express()
+const mysql = require("mysql2");
 
-const cors = require("cors")
+const host = process.env.HOST
+console.log(host)
 
-app.use(express.json())
+const connection = mysql.createConnection({
+   host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+});
 
-app.use(cors())
+const routesOfUser = require("./routes/crudRotes");
 
-const port = 3000
+function startServer() {
+    connection.connect(function(err) {
+        if (err) {
+            console.error("ERR WHILE CONNECTING TO DB", err);
+            return;
+        }
+        console.log("DATABASE_CONNECTION_ESTABLISHED");
 
-const connection = require("./model/crudModel")
+        const query = "SELECT * FROM users";
+        connection.query(query, function(err, result) {
+            if (err) {
+                console.error("ERROR EXECUTING QUERY", err);
+                return;
+            }
+            console.log(result);
 
-const routesOfUSer = require("./routes/crudRotes")
-
-async function startSever(){
-   
-    try{
-    await connection;
-    const query = "select * from users";
-    let result = await connection.query(query)
-    console.log(result)
-    console.log("DATABASE_CONNECTION_ESTABLISHED");
-   
-    app.listen(port,()=>console.log(`SERVER CONNECTION IS ESTABLISHED WITH PORT ${port}`))
-    }
-    catch(err){
-        console.log("ERR WHILE CONNECTING TO DB",err)
-    }
+            app.listen(port, function() {
+                console.log(`SERVER CONNECTION IS ESTABLISHED WITH PORT ${port}`);
+            });
+        });
+    });
 }
-startSever()
 
-app.get("/",(req,res)=>{
-   res.send("Hello world")
-})
+startServer();
 
-app.use("/api", routesOfUSer)
+app.get("/", (req, res) => {
+    res.send("Hello world");
+});
+
+app.use("/api", routesOfUser);

@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
     database: "test_db2"
 });
 
-const routesOfUser = require("./routes/crudRoutes");
+const routesOfUser = require("./routes/crudRotes");
 
 function startServer() {
     connection.connect(function(err) {

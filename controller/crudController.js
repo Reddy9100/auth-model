@@ -22,8 +22,8 @@ const signUpUser = async (req, res) => {
         }
 
         // Insert the new user into the database
-        const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-        await connection.query(query, [name, email, hashedPassword]);
+        const insertquery = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+        await connection.query(insertquery, [name, email, hashedPassword]);
 
         // Respond with success message
         res.status(201).json({ message: "User created successfully" });
@@ -43,8 +43,8 @@ const loginUser = async (req, res) => {
         }
 
         // Query user from the database
-        const query = "SELECT * FROM users WHERE email = ?";
-        const [rows, _] = await connection.query(query, [email]);
+        const queryuser = "SELECT * FROM users WHERE email = ?";
+        const [rows, _] = await connection.query(queryuser, [email]);
         if (rows.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }

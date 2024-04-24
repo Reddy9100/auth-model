@@ -10,16 +10,6 @@ const port = 3000;
 
 const mysql = require("mysql2");
 
-const host = process.env.HOST
-console.log(host)
-
-const connection = mysql.createConnection({
-   host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
-
 const routesOfUser = require("./routes/crudRotes");
 
 function startServer() {
@@ -38,10 +28,10 @@ function startServer() {
             }
             console.log(result)
 const connection = mysql.createConnection({
-    host: "localhost",
+    host: "65.2.146.84",
     user: "root",
-    password: "root123",
-    database: "test_db2"
+    password: "Admin@123456789!",
+    database: "dockerdatabase"
 });
 
 const routesOfUser = require("./routes/crudRotes");

@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
 });
 
 // Function to start the server
-function startServer() {
+function startServer(connection) {
     connection.connect(function(err) {
         if (err) {
             console.error("ERR WHILE CONNECTING TO DB", err);
@@ -43,7 +43,7 @@ function startServer() {
 }
 
 // Start the server
-startServer();
+startServer(connection);
 
 // Define a basic route
 app.get("/", (req, res) => {
@@ -52,3 +52,5 @@ app.get("/", (req, res) => {
 
 // Mount the CRUD routes
 app.use("/api", routesOfUser);
+
+module.exports  = connection

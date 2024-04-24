@@ -1,7 +1,8 @@
-const connection = require("../index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const connection = require("../index");
 
+// Controller function for user signup
 const signUpUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -15,15 +16,13 @@ const signUpUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10); // Using salt round 10
 
         // Check if the email already exists
-        const query1 = "SELECT * FROM users WHERE email = ?";
-        const [existingUsers, _] = await connection.query(query1, [email]);
+        const [existingUsers] = await connection.execute("SELECT * FROM users WHERE email = ?", [email]);
         if (existingUsers.length !== 0) {
             return res.status(400).json({ error: "User already exists" });
         }
 
         // Insert the new user into the database
-        const insertquery = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-        await connection.query(insertquery, [name, email, hashedPassword]);
+        await connection.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [name, email, hashedPassword]);
 
         // Respond with success message
         res.status(201).json({ message: "User created successfully" });
@@ -33,6 +32,7 @@ const signUpUser = async (req, res) => {
     }
 };
 
+// Controller function for user login
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -43,8 +43,7 @@ const loginUser = async (req, res) => {
         }
 
         // Query user from the database
-        const queryuser = "SELECT * FROM users WHERE email = ?";
-        const [rows, _] = await connection.query(queryuser, [email]);
+        const [rows] = await connection.execute("SELECT * FROM users WHERE email = ?", [email]);
         if (rows.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }

@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const signUpUser = async (req, res) => {
     try {
         const { name,email,password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const salt=10
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const query1 = "SELECT * FROM users WHERE email = ?";
         const [existingUsers, _] = await connection.query(query1, [email]);
